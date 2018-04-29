@@ -1,13 +1,31 @@
 import {admin, initializeApp} from ".."
 
 interface BackupFirestoreParams {
-  configPath: string
-  outputPath: string
+  config: string
   path: string
 }
 
 export async function backupFirestore(params: BackupFirestoreParams) {
-  initializeApp(params.configPath)
-  const collections = await admin.firestore().getCollections()
-  console.warn(collections.map(it => it.id))
+  const {config, path} = params
+  initializeApp(config)
+  let result: object = {}
+  if (!path || path == "/") {
+    const collections = await admin.firestore().getCollections()
+    for (const it of collections) {
+      result = {...result, ...await backupCoollection(it.path)}
+    }
+  } else {
+    const doc = await admin.firestore().doc(path).get()
+    if (doc.exists) result = await backupDocument(path)
+    else result = await backupCoollection(path)
+  }
+  return result
+}
+
+async function backupDocument(path: string) {
+  return {}
+}
+
+async function backupCoollection(path: string) {
+  return {}
 }

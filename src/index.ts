@@ -1,5 +1,6 @@
 import program from "commander"
 
+import {saveObjectToJSON, loadObjectFromJSON} from "./file"
 import {backupFirestore, restoreFirestore} from "./firebase"
 
 program
@@ -22,14 +23,16 @@ program.parse(process.argv)
 
 function actionFirebaseBackup(...args: any[]) {
   const [path, options] = args
-  const {output: outputPath, parent} = options
-  const {config: configPath} = parent
-  backupFirestore({configPath, outputPath, path})
+  const {output, parent} = options
+  const {config} = parent
+  backupFirestore({config, path})
+    .then(object => saveObjectToJSON({object, output}))
 }
 
 function actionFirebaseRestore(...args: any[]) {
   const [path, options] = args
-  const {json: jsonPath, parent} = options
-  const {config: configPath} = parent
-  restoreFirestore({configPath, jsonPath, path})
+  const {json: input, parent} = options
+  const {config} = parent
+  const object = loadObjectFromJSON({input})
+  restoreFirestore({config, object, path})
 }
