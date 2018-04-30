@@ -2,7 +2,7 @@ import program from "commander"
 
 import {loadFromFile, saveToFile} from "./file"
 import {backupFirestore, restoreFirestore} from "./firebase"
-import {fromJSON, toJSON} from "./firebase/firestore/utils"
+import {fromJSON, toJSON} from "./firebase/firestore/json"
 
 program
   .version("0.1.0")

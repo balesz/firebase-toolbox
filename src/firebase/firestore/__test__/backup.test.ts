@@ -2,7 +2,7 @@ import {writeFileSync} from "fs"
 import {lensPath, view} from "ramda"
 
 import {backupFirestore} from "../.."
-import {fromJSON, toJSON} from "../utils"
+import {fromJSON, toJSON} from "../json"
 
 describe("backupFirestore()", () => {
 

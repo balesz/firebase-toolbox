@@ -1,7 +1,7 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
 import {admin, initializeApp} from ".."
-import {getPathSegments} from "./utils"
+import {getPathSegments} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference

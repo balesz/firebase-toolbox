@@ -2,6 +2,7 @@ import {GeoPoint} from "@google-cloud/firestore"
 import {cond, isEmpty, last, map, match, not, pipe, split, T} from "ramda"
 
 import {admin} from ".."
+import {getPathSegments} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,11 +19,6 @@ export const fromJSON = (json: string) => JSON.parse(json, (key, val) => cond([
   [it => pipe(matchCollection, isEmpty, not)(it), it => convertCollection(it)],
   [T, it => val]
 ])(`${val}`))
-
-export const getPathSegments = (path: string) => path
-  .split("/")
-  .filter(it => it != "")
-  .reduce((a: string[], v, i) => [...a, (i + 1) % 2 == 0 ? v : `[${v}]`], [])
 
 export const toJSON = (object: any) => JSON.stringify(object, (key, val) => {
   if (isReference(val)) {
