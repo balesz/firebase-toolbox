@@ -1,23 +1,23 @@
-import {writeFileSync, readFileSync} from "fs"
+import {existsSync, readFileSync, writeFileSync} from "fs"
 
-interface SaveObjectToJSONParams {
-  object: object
+interface SaveToFile {
+  data: string
   output: string
 }
 
-interface LoadObjectFromJSONParams {
+interface LoadFromFile {
   input: string
 }
 
-export function saveObjectToJSON(params: SaveObjectToJSONParams) {
-  const {output, object} = params
-  const json = JSON.stringify(object)
-  writeFileSync(output, json, "utf8")
+export function saveToFile(params: SaveToFile) {
+  const {data, output} = params
+  if (!data) throw Error("Data is null!!")
+  writeFileSync(output, data, "utf8")
 }
 
-export function loadObjectFromJSON(params: LoadObjectFromJSONParams) {
+export function loadFromFile(params: LoadFromFile) {
   const {input} = params
-  const content = readFileSync(input, "utf8")
-  const result = JSON.parse(content)
+  if (!existsSync(input)) throw Error("Input file not exists!!")
+  const result = readFileSync(input, "utf8")
   return result
 }
