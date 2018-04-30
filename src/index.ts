@@ -1,7 +1,8 @@
 import program from "commander"
 
-import {saveObjectToJSON, loadObjectFromJSON} from "./file"
+import {loadFromFile, saveToFile} from "./file"
 import {backupFirestore, restoreFirestore} from "./firebase"
+import {fromJSON, toJSON} from "./firebase/firestore/utils"
 
 program
   .version("0.1.0")
@@ -26,13 +27,14 @@ function actionFirebaseBackup(...args: any[]) {
   const {output, parent} = options
   const {config} = parent
   backupFirestore({config, path})
-    .then(object => saveObjectToJSON({object, output}))
+    .then(object => saveToFile({data: toJSON(object), output}))
 }
 
 function actionFirebaseRestore(...args: any[]) {
   const [path, options] = args
   const {json: input, parent} = options
   const {config} = parent
-  const object = loadObjectFromJSON({input})
+  const content = loadFromFile({input})
+  const object = fromJSON(content)
   restoreFirestore({config, object, path})
 }

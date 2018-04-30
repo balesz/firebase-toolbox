@@ -6,12 +6,12 @@ import {getPathSegments} from "./utils"
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference
 
-interface BackupFirestoreParams {
+interface BackupFirestore {
   config: string
   path: string
 }
 
-export async function backupFirestore(params: BackupFirestoreParams) {
+export async function backupFirestore(params: BackupFirestore) {
   const {config, path} = params
   initializeApp(config)
   let result = {}
@@ -33,7 +33,7 @@ export async function backupFirestore(params: BackupFirestoreParams) {
   return result
 }
 
-export async function _backupCollection(ref: CollectionReference) {
+async function _backupCollection(ref: CollectionReference) {
   const snap = await ref.get()
   if (snap.empty) return {}
   let result = {}
@@ -43,7 +43,7 @@ export async function _backupCollection(ref: CollectionReference) {
   return result
 }
 
-export async function _backupDocument(snap: DocumentSnapshot) {
+async function _backupDocument(snap: DocumentSnapshot) {
   if (!snap.exists) return {}
   let result = {}
   const collections = await snap.ref.getCollections()
