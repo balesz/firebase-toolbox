@@ -1,7 +1,7 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
 import {admin, initializeApp} from ".."
-import {getPathSegments} from "./path"
+import {getPathSegments, isCollectionPath} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference
@@ -21,13 +21,12 @@ export async function backupFirestore(params: BackupFirestore) {
       result = mergeDeepLeft(result, await _backupCollection(it))
     }
   } else {
-    const segments = getPathSegments(path)
-    if (segments.length % 2 == 0) {
-      const snapDoc = await admin.firestore().doc(path).get()
-      if (snapDoc.exists) result = await _backupDocument(snapDoc)
-    } else {
+    if (isCollectionPath(path)) {
       const refColl = admin.firestore().collection(path)
       result = await _backupCollection(refColl)
+    } else {
+      const snapDoc = await admin.firestore().doc(path).get()
+      if (snapDoc.exists) result = await _backupDocument(snapDoc)
     }
   }
   return result

@@ -2,7 +2,7 @@ import {GeoPoint} from "@google-cloud/firestore"
 import {cond, isEmpty, last, map, match, not, pipe, split, T} from "ramda"
 
 import {admin} from ".."
-import {getPathSegments} from "./path"
+import {isCollectionPath} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -13,17 +13,18 @@ type CollectionReference = FirebaseFirestore.CollectionReference
 ////////////////////////////////////////////////////////////////////////////////
 
 export const fromJSON = (json: string) => JSON.parse(json, (key, val) => cond([
-  [it => pipe(matchTimestamp, isEmpty, not)(it), it => convertTimestamp(it)],
-  [it => pipe(matchGeoPoint, isEmpty, not)(it), it => convertGeoPoint(it)],
-  [it => pipe(matchDocument, isEmpty, not)(it), it => convertDocument(it)],
-  [it => pipe(matchCollection, isEmpty, not)(it), it => convertCollection(it)],
+  [pipe(matchTimestamp, isNotEmpty), convertTimestamp],
+  [pipe(matchGeoPoint, isNotEmpty), convertGeoPoint],
+  [pipe(matchDocument, isNotEmpty), convertDocument],
+  [pipe(matchCollection, isNotEmpty), convertCollection],
   [T, it => val]
 ])(`${val}`))
 
 export const toJSON = (object: any) => JSON.stringify(object, (key, val) => {
-  if (isReference(val)) {
-    const segm = getPathSegments(val.path)
-    return `${segm.length % 2 == 0 ? "document" : "collection"}://${val.path}`
+  if (isReference(val) && isCollectionPath(val.path)) {
+    return `collection://${val.path}`
+  } else if (isReference(val) && !isCollectionPath(val.path)) {
+    return `document://${val.path}`
   } else if (isTimestamp(val)) {
     return `${val}`
   } else if (isGeoPoint(val)) {
@@ -58,6 +59,8 @@ const convertCollection = pipe(matchCollection, last,
 //endregion
 
 //region Checkers
+
+const isNotEmpty = pipe(isEmpty, not)
 
 function isTimestamp(val: any): val is Date {
   return !!val && pipe(matchTimestamp, isEmpty, not)(`${val}`)
