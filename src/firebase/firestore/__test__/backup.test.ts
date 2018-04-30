@@ -29,7 +29,7 @@ describe("backupFirestore()", () => {
     expect(view(lens)(result)).not.toBeUndefined()
   }, 600000)
 
-  fit("try to backup the entire firestore", async () => {
+  it("try to backup the entire firestore", async () => {
     expect.assertions(1)
     const result = await backupFirestore({config, path: "/"})
     const lens = lensPath(["[profile]", "5Xfwqv0HWYVXQHQTGpOq3GDXb573"])
@@ -37,7 +37,7 @@ describe("backupFirestore()", () => {
     writeFileSync("backup.json", toJSON(result), "utf8")
   }, 600000)
 
-  it("try to backup test collection", async () => {
+  fit("try to backup test collection", async () => {
     expect.assertions(1)
     const result = await backupFirestore({config, path: "/test"})
     const lens = lensPath(["[test]", "testId", "timestamp"])

@@ -27,11 +27,11 @@ export const getPathSegments = (path: string) => path
 export const toJSON = (object: any) => JSON.stringify(object, (key, val) => {
   if (isReference(val)) {
     const segm = getPathSegments(val.path)
-    return `${segm.length % 2 == 0 ? "Document" : "Collection"}(${val.path})`
+    return `${segm.length % 2 == 0 ? "document" : "collection"}://${val.path}`
   } else if (isTimestamp(val)) {
-    return `Timestamp(${val})`
+    return `${val}`
   } else if (isGeoPoint(val)) {
-    return `GeoPoint(${val.latitude},${val.longitude})`
+    return `geo(${val.latitude},${val.longitude})`
   } else {
     return val
   }
@@ -40,9 +40,9 @@ export const toJSON = (object: any) => JSON.stringify(object, (key, val) => {
 //region Matchers
 
 const matchTimestamp = match(/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/)
-const matchGeoPoint = match(/GeoPoint\((.*)\)/)
-const matchDocument = match(/Document\((.*)\)/)
-const matchCollection = match(/Collection\((.*)\)/)
+const matchGeoPoint = match(/geo\((.*)\)/)
+const matchDocument = match(/document:\/\/(.*)/)
+const matchCollection = match(/collection:\/\/(.*)/)
 
 //endregion
 
