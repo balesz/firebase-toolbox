@@ -1,7 +1,7 @@
 import program from "commander"
 
 import {loadFromFile, saveToFile} from "./file"
-import {backupFirestore, restoreFirestore} from "./firebase"
+import {backupFirestore, initializeApp, restoreFirestore} from "./firebase"
 import {fromJSON, toJSON} from "./firebase/firestore/json"
 
 program
@@ -26,7 +26,8 @@ function actionFirebaseBackup(...args: any[]) {
   const [path, options] = args
   const {output, parent} = options
   const {config} = parent
-  backupFirestore({config, path})
+  initializeApp(config)
+  backupFirestore({path})
     .then(object => saveToFile({data: toJSON(object), output}))
 }
 

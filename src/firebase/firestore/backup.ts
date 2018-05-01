@@ -1,19 +1,17 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
-import {admin, initializeApp} from ".."
+import {admin} from ".."
 import {getPathSegments, isCollectionPath} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference
 
 interface BackupFirestore {
-  config: string
   path: string
 }
 
 export async function backupFirestore(params: BackupFirestore) {
-  const {config, path} = params
-  initializeApp(config)
+  const {path} = params
   let result = {}
   if (!path || path == "" || path == "/") {
     const collections = await admin.firestore().getCollections()
