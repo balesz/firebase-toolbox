@@ -35,7 +35,7 @@ function actionFirebaseRestore(...args: any[]) {
   const [path, options] = args
   const {json: input, parent} = options
   const {config} = parent
-  const content = loadFromFile({input})
-  const object = fromJSON(content)
-  restoreFirestore({config, object, path})
+  const data = fromJSON(loadFromFile({input}))
+  initializeApp(config)
+  restoreFirestore(data, path)
 }

@@ -1,16 +1,20 @@
 import {
   addIndex,
+  equals,
   isEmpty,
+  isNil,
   last,
+  lensPath,
   map,
   match,
   not,
   pipe,
   reject,
   split,
+  view,
 } from "ramda"
 
-const matchCollection = match(/\__.*\__/)
+export const matchCollectionName = match(/\__.*\__/)
 
 export const getPathSegments = pipe(
   split("/"), it => reject(el => el == "", it),
@@ -19,5 +23,11 @@ export const getPathSegments = pipe(
 )
 
 export const isCollectionPath = pipe(
-  getPathSegments, last, matchCollection, isEmpty, not
+  getPathSegments, last, matchCollectionName, isEmpty, not
+)
+
+export const isPathExists = (path: string, data: any) => !!path && (
+  equals("/", path) || pipe(
+    getPathSegments, lensPath, it => view(it)(data), isNil, not
+  )(path)
 )
