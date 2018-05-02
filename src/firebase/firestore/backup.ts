@@ -6,12 +6,7 @@ import {getPathSegments, isCollectionPath} from "./path"
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference
 
-interface BackupFirestore {
-  path: string
-}
-
-export async function backupFirestore(params: BackupFirestore) {
-  const {path} = params
+export async function backupFirestore(path: string) {
   let result = {}
   if (!path || path == "" || path == "/") {
     const collections = await admin.firestore().getCollections()

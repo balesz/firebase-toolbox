@@ -27,7 +27,7 @@ function actionFirebaseBackup(...args: any[]) {
   const {output, parent} = options
   const {config} = parent
   initializeApp(config)
-  backupFirestore({path})
+  backupFirestore(path)
     .then(object => saveToFile({data: toJSON(object), output}))
 }
 
