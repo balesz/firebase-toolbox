@@ -1,26 +1,25 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
 import {admin} from ".."
-import {getPathSegments, isCollectionPath} from "./path"
+import {Path} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
 type CollectionReference = FirebaseFirestore.CollectionReference
 
-export async function backupFirestore(path: string) {
+export async function backupFirestore(sourcePath: string) {
+  const path = new Path(sourcePath)
   let result = {}
-  if (!path || path == "" || path == "/") {
+  if (path.isEmpty) {
     const collections = await admin.firestore().getCollections()
     for (const it of collections) {
       result = mergeDeepLeft(result, await _backupCollection(it))
     }
+  } else if (path.isCollection) {
+    const refColl = admin.firestore().collection(path.reference)
+    result = await _backupCollection(refColl)
   } else {
-    if (isCollectionPath(path)) {
-      const refColl = admin.firestore().collection(path)
-      result = await _backupCollection(refColl)
-    } else {
-      const snapDoc = await admin.firestore().doc(path).get()
-      if (snapDoc.exists) result = await _backupDocument(snapDoc)
-    }
+    const snapDoc = await admin.firestore().doc(path.reference).get()
+    if (snapDoc.exists) result = await _backupDocument(snapDoc)
   }
   return result
 }
@@ -42,7 +41,7 @@ async function _backupDocument(snap: DocumentSnapshot) {
   for (const collection of collections) {
     result = mergeDeepLeft(result, await _backupCollection(collection))
   }
-  const segments = getPathSegments(snap.ref.path)
-  result = mergeDeepLeft(result, assocPath(segments, snap.data()!)({}))
+  const path = new Path(snap.ref.path)
+  result = mergeDeepLeft(result, assocPath(path.objectArray, snap.data()!)({}))
   return result
 }

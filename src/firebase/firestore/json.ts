@@ -2,7 +2,7 @@ import {GeoPoint} from "@google-cloud/firestore"
 import {cond, isEmpty, last, map, match, not, pipe, split, T} from "ramda"
 
 import {admin} from ".."
-import {isCollectionPath} from "./path"
+import {Path} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +21,9 @@ export const fromJSON = (json: string) => JSON.parse(json, (key, val) => cond([
 ])(`${val}`))
 
 export const toJSON = (object: any) => JSON.stringify(object, (key, val) => {
-  if (isReference(val) && isCollectionPath(val.path)) {
+  if (isReference(val) && Path.isCollectionPath(val.path)) {
     return `collection://${val.path}`
-  } else if (isReference(val) && !isCollectionPath(val.path)) {
+  } else if (isReference(val)) {
     return `document://${val.path}`
   } else if (isTimestamp(val)) {
     return `${val}`

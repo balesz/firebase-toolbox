@@ -1,21 +1,6 @@
-import {
-  isEmpty,
-  isNil,
-  keys,
-  lensPath,
-  not,
-  omit,
-  pair,
-  pipe,
-  view,
-} from "ramda"
+import {isEmpty, isNil, keys, lensPath, omit, pair, view} from "ramda"
 
-import {
-  getPathSegments,
-  isCollectionPath,
-  isPathExists,
-  matchCollectionName,
-} from "./path"
+import {Path} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,54 +8,53 @@ type Data = {[key: string]: any}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export async function restoreFirestore(path: string, data: Data) {
+export async function restoreFirestore(destPath: string, data: Data) {
+  const path = new Path(destPath)
   _checkError(path, data)
-  if (path == "/") {
-    await _restoreDocument("", data)
+  if (path.isEmpty) {
+    await _restoreDocument(path, data)
   } else {
-    const objPath = getPathSegments(path).join("/")
-    const value = view(lensPath(getPathSegments(path)), data)
-    const func = isCollectionPath(path) ? _restoreCollection : _restoreDocument
-    await func(objPath, value)
+    const func = path.isCollection ? _restoreCollection : _restoreDocument
+    await func(path, view(lensPath(path.objectArray), data))
   }
   return _writeChanges()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function _checkError(path: string, data: Data) {
+function _checkError(path: Path, data: Data) {
   if (!data) {
     throw Error("Data parameter is nil!!")
-  } else if (!isPathExists(path, data)) {
+  } else if (!path.isExistsIn(data)) {
     throw Error("The path is not in the data!!")
   }
 }
 
-async function _restoreCollection(path: string, data: Data) {
+async function _restoreCollection(path: Path, data: Data) {
   for (const key in data)
-    await _restoreDocument(`${path}/${key}`, data[key])
+    await _restoreDocument(new Path(path.toString(key)), data[key])
 }
 
-async function _restoreDocument(path: string, data: Data) {
-  const colls = keys(data).filter(pipe(matchCollectionName, isEmpty, not))
+async function _restoreDocument(path: Path, data: Data) {
+  const colls = keys(data).filter(Path.isCollectionKey)
   await _setDocument(path, omit(colls, data))
   for (const key of colls)
-    await _restoreCollection(`${path}/${key}`, data[key])
+    await _restoreCollection(new Path(path.toString(key)), data[key])
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 let result: [string, Data][] | undefined
 
-async function _setDocument(path: string, data: Data) {
+async function _setDocument(path: Path, data: Data) {
   if (isEmpty(data)) return
   if (isNil(result)) result = []
-  result.push(pair(path, data))
+  result.push(pair(path.reference, data))
 }
 
 async function _writeChanges() {
-  const resultSize = result!.length
-  const ret = [...result!]
+  const resultSize = result ? result.length : 0
+  const ret = [...result || []]
   result = undefined
   return ret
 }
