@@ -2,3 +2,4 @@ node_modules
 build
 temp
 **/quokka.ts
+yarn-error.log
