@@ -48,7 +48,7 @@ describe("restoreFirestore()", () => {
   it("call on a valid backup file", async () => {
     expect.assertions(1)
     const path = "/profile"
-    const json = loadFromFile({input})
+    const json = loadFromFile(input)
     const data = fromJSON(json)
     const result = await restoreFirestore(path, data)
     expect(result.length).toBeGreaterThan(0)

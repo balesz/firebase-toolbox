@@ -1,4 +1,4 @@
-import {unlinkSync} from "fs"
+import {existsSync, unlinkSync} from "fs"
 
 import {loadFromFile, saveToFile} from "../file"
 
@@ -12,22 +12,22 @@ describe("File Tests", () => {
   })
 
   it("try to save a null object to JSON", () => {
-    expect(() => saveToFile({output: filePath, data: null as any}))
-      .toThrowError("Data is null!!")
+    expect(() => saveToFile(filePath, ""))
+      .toThrowError("Data is invalid!!")
   })
 
   it("try to save object to JSON", () => {
-    saveToFile({output: filePath, data: JSON.stringify(obj)})
-    expect(true).toBeTruthy()
+    saveToFile(filePath, JSON.stringify(obj))
+    expect(existsSync(filePath)).toBe(true)
   })
 
   it("try to load object from a non existing file", () => {
-    expect(() => loadFromFile({input: "./sadf.json"}))
+    expect(() => loadFromFile("./asdf.json"))
       .toThrowError("Input file not exists!!")
   })
 
   it("try to load object from an existing file", () => {
-    const obj = JSON.parse(loadFromFile({input: filePath}))
+    const obj = JSON.parse(loadFromFile(filePath))
     expect(obj).not.toBeNull()
     expect(obj).toHaveProperty("hello")
   })

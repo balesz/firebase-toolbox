@@ -28,14 +28,14 @@ function actionFirebaseBackup(...args: any[]) {
   const {config} = parent
   initializeApp(config)
   backupFirestore(path)
-    .then(object => saveToFile({data: toJSON(object), output}))
+    .then(object => saveToFile(output, toJSON(object)))
 }
 
 function actionFirebaseRestore(...args: any[]) {
   const [path, options] = args
   const {json: input, parent} = options
   const {config} = parent
-  const data = fromJSON(loadFromFile({input}))
+  const data = fromJSON(loadFromFile(input))
   initializeApp(config)
   restoreFirestore(data, path)
 }
