@@ -10,11 +10,11 @@ import {
   split,
 } from "ramda"
 
-const matchCollection = match(/\[.*\]/)
+const matchCollection = match(/\__.*\__/)
 
 export const getPathSegments = pipe(
   split("/"), it => reject(el => el == "", it),
-  addIndex(map)((it, idx) => (idx + 1) % 2 == 0 ? `${it}` : `[${it}]`),
+  addIndex(map)((it, idx) => (idx + 1) % 2 == 0 ? `${it}` : `__${it}__`),
   map(it => it as string)
 )
 
