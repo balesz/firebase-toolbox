@@ -1,6 +1,8 @@
 import admin from "firebase-admin"
 import fs from "fs"
 
+import {lazy} from "../utils"
+
 export {admin}
 export * from "./firestore"
 
@@ -27,3 +29,9 @@ export function initializeApp(configPath: string) {
     storageBucket: `${config.project_id}.appspot.com`,
   })
 }
+
+export const database = lazy(() => admin.database())
+export const firestore = lazy(() => admin.firestore())
+
+export const refDocument = (path: string) => firestore().doc(path)
+export const refCollection = (path: string) => firestore().collection(path)
