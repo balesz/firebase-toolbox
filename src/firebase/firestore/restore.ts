@@ -1,5 +1,6 @@
-import {isEmpty, isNil, keys, lensPath, omit, pair, view} from "ramda"
+import {isEmpty, isNil, keys, length, lensPath, omit, pair, view} from "ramda"
 
+import {ProgressEvent} from "./event"
 import {Path} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -8,15 +9,21 @@ type Data = {[key: string]: any}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+export const restoreProgress = new ProgressEvent()
+
 export async function restoreFirestore(destPath: string, data: Data) {
   const path = new Path(destPath)
   _checkError(path, data)
+  const lens = lensPath(path.objectArray)
   if (path.isEmpty) {
     await _restoreDocument(path, data)
+  } else if (path.isCollection) {
+    await _restoreCollection(path, view(lens, data))
   } else {
-    const func = path.isCollection ? _restoreCollection : _restoreDocument
-    await func(path, view(lensPath(path.objectArray), data))
+    restoreProgress.emitSize(1)
+    await _restoreDocument(path, view(lens, data))
   }
+  restoreProgress.removeAllListeners()
   return _writeChanges()
 }
 
@@ -31,15 +38,19 @@ function _checkError(path: Path, data: Data) {
 }
 
 async function _restoreCollection(path: Path, data: Data) {
-  for (const key in data)
+  restoreProgress.emitSize(length(keys(data)))
+  for (const key in data) {
     await _restoreDocument(new Path(path.toString(key)), data[key])
+  }
 }
 
 async function _restoreDocument(path: Path, data: Data) {
   const colls = keys(data).filter(Path.isCollectionKey)
   await _setDocument(path, omit(colls, data))
-  for (const key of colls)
+  restoreProgress.emitStep(path.reference)
+  for (const key of colls) {
     await _restoreCollection(new Path(path.toString(key)), data[key])
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
