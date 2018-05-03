@@ -1,6 +1,6 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
-import {admin} from ".."
+import {getCollections, refCollection, refDocument} from ".."
 import {Path} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
@@ -10,15 +10,15 @@ export async function backupFirestore(sourcePath: string) {
   const path = new Path(sourcePath)
   let result = {}
   if (path.isEmpty) {
-    const collections = await admin.firestore().getCollections()
+    const collections = await getCollections()
     for (const it of collections) {
       result = mergeDeepLeft(result, await _backupCollection(it))
     }
   } else if (path.isCollection) {
-    const refColl = admin.firestore().collection(path.reference)
+    const refColl = refCollection(path.reference)
     result = await _backupCollection(refColl)
   } else {
-    const snapDoc = await admin.firestore().doc(path.reference).get()
+    const snapDoc = await refDocument(path.reference).get()
     if (snapDoc.exists) result = await _backupDocument(snapDoc)
   }
   return result

@@ -1,7 +1,7 @@
 import {GeoPoint} from "@google-cloud/firestore"
 import {cond, isEmpty, last, map, match, not, pipe, split, T} from "ramda"
 
-import {admin} from ".."
+import {refCollection, refDocument} from ".."
 import {Path} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,11 +50,9 @@ const convertTimestamp = pipe(matchTimestamp, last, it => new Date(it))
 const convertGeoPoint = pipe(matchGeoPoint, last, split(","),
   map(Number.parseFloat), ([lat, lon]) => new GeoPoint(lat, lon))
 
-const convertDocument = pipe(matchDocument, last,
-  it => admin.firestore().doc(it))
+const convertDocument = pipe(matchDocument, last, refDocument)
 
-const convertCollection = pipe(matchCollection, last,
-  it => admin.firestore().collection(it))
+const convertCollection = pipe(matchCollection, last, refCollection)
 
 //endregion
 

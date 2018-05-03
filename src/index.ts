@@ -1,7 +1,8 @@
 import program from "commander"
 
 import {loadFromFile, saveToFile} from "./file"
-import {backupFirestore, initializeApp, restoreFirestore} from "./firebase"
+import {initializeApp} from "./firebase"
+import {backupFirestore, restoreFirestore} from "./firebase/firestore"
 import {fromJSON, toJSON} from "./firebase/firestore/json"
 
 program

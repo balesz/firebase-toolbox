@@ -1,5 +1,6 @@
-import {initializeApp, restoreFirestore} from "../.."
+import {initializeApp} from "../.."
 import {loadFromFile} from "../../../file"
+import {restoreFirestore} from "../../firestore"
 import {fromJSON} from "../json"
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000

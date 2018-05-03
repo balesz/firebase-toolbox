@@ -1,7 +1,8 @@
 import {writeFileSync} from "fs"
 import {lensPath, view} from "ramda"
 
-import {backupFirestore, initializeApp} from "../.."
+import {initializeApp} from "../.."
+import {backupFirestore} from "../../firestore"
 import {toJSON} from "../json"
 
 
