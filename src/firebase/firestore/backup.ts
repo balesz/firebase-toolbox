@@ -1,7 +1,7 @@
 import {assocPath, mergeDeepLeft} from "ramda"
 
 import {getCollections, refCollection, refDocument} from ".."
-import {ProgressEvent} from "./event"
+import {ProgressEvent} from "../../utils"
 import {Path} from "./path"
 
 type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot

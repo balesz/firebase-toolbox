@@ -1,6 +1,6 @@
 import {isEmpty, isNil, keys, length, lensPath, omit, pair, view} from "ramda"
 
-import {ProgressEvent} from "./event"
+import {ProgressEvent} from "../../utils"
 import {Path} from "./path"
 
 ////////////////////////////////////////////////////////////////////////////////
