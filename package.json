@@ -1,5 +1,5 @@
 {
-  "name": "firebase-cli",
+  "name": "firebase-toolbox",
   "version": "0.1.0",
   "main": "build/index.js",
   "license": "MIT",
