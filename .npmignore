@@ -1,0 +1,7 @@
+src
+.vscode
+**/__test__
+
+.gitignore
+tsconfig.*
+yarn*

@@ -1,32 +1,29 @@
 {
   "name": "firebase-toolbox",
   "version": "0.1.0",
-  "main": "build/index.js",
+  "bin": "dist/app.js",
+  "main": "dist/index.js",
+  "repository": "github:balesz/firebase-toolbox",
   "license": "MIT",
   "author": {
     "email": "balint.bode@gmail.com",
     "name": "Bálint Böde",
     "url": "https://github.com/balesz"
   },
+  "keywords": [
+    "backup",
+    "cli",
+    "command line",
+    "firebase",
+    "resore",
+    "tool"
+  ],
   "scripts": {
     "build": "tsc",
-    "start": "yarn build && node .",
+    "prestart": "tsc",
+    "start": "node ./dist/app.js",
     "test": "jest",
     "watch": "tsc -w"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
   },
   "dependencies": {
     "chalk": "^2.4.1",
@@ -44,5 +41,19 @@
     "ts-jest": "^22.4.4",
     "ts-node": "^6.0.2",
     "typescript": "^2.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
