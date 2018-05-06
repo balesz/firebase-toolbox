@@ -1,5 +1,6 @@
 node_modules
 config
+coverage
 dist
 temp
 **/quokka.ts
