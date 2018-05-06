@@ -21,9 +21,8 @@
   "scripts": {
     "build": "tsc",
     "prestart": "tsc",
-    "start": "node ./dist/app.js",
-    "test": "jest",
-    "watch": "tsc -w"
+    "start": "node --inspect-brk ./dist/app.js `cat config/debug.conf`",
+    "test": "jest"
   },
   "dependencies": {
     "chalk": "^2.4.1",
